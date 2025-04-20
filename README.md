@@ -1,1 +1,1 @@
-xiao ying is most special person i've ever met.
+xiao ying is most special person i've ever met. xiao ying looks like a boy. xiao ying doesn't like romatic and xiao ying always threat to put a blade on my throat.
