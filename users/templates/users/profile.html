@@ -48,32 +48,26 @@
                 {% csrf_token %}
                 <div class="row">
                   <div class="col-md-6 mb-3">
-                    <label for="first_name" class="form-label">First Name</label>
-                    <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}">
+                    <label for="{{ user_form.first_name.id_for_label }}" class="form-label">First Name</label>
+                    {{ user_form.first_name }}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label for="last_name" class="form-label">Last Name</label>
-                    <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">
+                    <label for="{{ user_form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                    {{ user_form.last_name }}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" readonly>
+                    <label for="{{ user_form.email.id_for_label }}" class="form-label">Email</label>
+                    {{ user_form.email }}
                   </div>
                   <div class="col-md-6 mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}">
+                    <label for="{{ user_form.username.id_for_label }}" class="form-label">Username</label>
+                    {{ user_form.username }}
                   </div>
                 </div>
                 <!-- Dataset Selection -->
                 <div class="form-group">
-                    <label for="dataset" class="form-label">Select Dataset</label>
-                    <select class="form-control" id="dataset" name="dataset">
-                        <option value="dataset1">Dataset 1</option>
-                        <option value="dataset2">Dataset 2</option>
-                        <option value="dataset3">Dataset 3</option>
-                        <option value="dataset4">Dataset 4</option>
-                        <option value="dataset5">Dataset 5</option>
-                    </select>
+                    <label for="{{ profile_form.dataset.id_for_label }}" class="form-label">Select Dataset</label>
+                    {{ profile_form.dataset }}
                 </div>
                 <button type="submit" class="btn btn-primary">Update Profile</button>
               </form>
