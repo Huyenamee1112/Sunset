@@ -32,16 +32,30 @@
         <div class="col-md-8 col-lg-6">
           <div class="card shadow-sm">
             <div class="card-body">
+              {% if messages %}
+                  {% for message in messages %}
+                      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                      {{ message }}
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
+                  {% endfor %}
+              {% endif %}
               <h5 class="card-title mb-4">Upload Your File</h5>
               <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="mb-3">
                     {{ form.name.label_tag }}
+                    {% if form.name.errors %}
+                        <div class="text-danger">{{ form.name.errors }}</div>
+                    {% endif %}
                     {{ form.name }}
                 </div>
                 <div class="mb-3">
-                  {{ form.file.label_tag }}
-                  {{ form.file }}
+                    {{ form.file.label_tag }}
+                    {% if form.file.errors %}
+                        <div class="text-danger">{{ form.file.errors }}</div>
+                    {% endif %}
+                    {{ form.file }}
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Upload</button>
               </form>

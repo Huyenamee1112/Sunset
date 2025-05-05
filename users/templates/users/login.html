@@ -20,6 +20,13 @@
               <h3 class="mb-0"><b>Login</b></h3>
               <a href="#" class="link-primary">Don't have an account?</a>
             </div>
+            {% if form.non_field_errors %}
+              <div class="text-danger">
+                {% for error in form.non_field_errors %}
+                    <div>{{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
             <!-- username -->
             <div class="form-group mb-3">
               {{ form.username.label_tag }}
