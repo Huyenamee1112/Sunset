@@ -19,13 +19,11 @@ class DatasetUploadForm(forms.ModelForm):
         model = Dataset
         fields = ['name', 'file']
         
-    def clean(self):
-        clean_data = super().clean()
-        name = clean_data.get('name')
-        if ' ' in name:
-            raise forms.ValidationError('File name does not contain space character.')
-        
-        return clean_data
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if name and ' ' in name:
+            raise forms.ValidationError('Name must not contain space character.')
+        return name
         
     def save(self, commit=True):
         instance = super().save(commit=False)
