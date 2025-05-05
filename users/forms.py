@@ -14,21 +14,20 @@ class UserLoginForm(forms.Form):
         'placeholder': 'Password'
     }))
     
+    
     def clean(self):
-        clean_data = super().clean()
+        cleaned_data = super().clean()
+        username = cleaned_data.get('username')
+        password = cleaned_data.get('password')
         
-        username = clean_data.get('username')
-        password = clean_data.get('password')
-        if not (username and password):
-            raise forms.ValidationError('Username and password are provided.')
+        user = authenticate(username=username, password=password)
         
-        user = authenticate(User, username=username, password=password)
         if not user:
             raise forms.ValidationError('Username or password is not correct.')
         
         self.user = user
         
-        return clean_data
+        return password
 
 
 class UserRegisterForm(UserCreationForm):
