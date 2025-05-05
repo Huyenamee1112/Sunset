@@ -33,6 +33,9 @@ def register(request):
     return render(request, 'users/register.html', {'form': form})
 
 
+def profile(request):
+    return render(request, 'users/profile.html')
+
 def logout_view(request):
     logout(request)
     return redirect('login')
