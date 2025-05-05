@@ -23,6 +23,8 @@ class DatasetUploadForm(forms.ModelForm):
         name = self.cleaned_data.get('name')
         if name and ' ' in name:
             raise forms.ValidationError('Name must not contain space character.')
+        if Dataset.objects.filter(name=name).exists():
+            raise forms.ValidationError('Name is already exists.')
         return name
         
     def save(self, commit=True):
