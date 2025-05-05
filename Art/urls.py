@@ -21,12 +21,14 @@ from django.conf.urls.static import static
 import dashboard.urls
 import users.urls
 import chart.urls
+import upload.urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(dashboard.urls)),
     path('', include(users.urls)),
-    path('', include(chart.urls))
+    path('', include(chart.urls)),
+    path('', include(upload.urls))
 ]
 
 if settings.DEBUG:
