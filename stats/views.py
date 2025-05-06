@@ -4,7 +4,9 @@ from .utils import get_df
 
 # Create your views here.
 def frequent_chart(request):
-    df = get_df()
+    df = get_df(request.user)
+    if df is None:
+        return JsonResponse({'error': 'Dataset is not set.'}, status=400)
     column = request.GET.get("column")
     if column not in df.columns:
         return JsonResponse({"error": "Invalid column"}, status=400)
@@ -22,7 +24,9 @@ def frequent_chart(request):
 
 
 def ctr_chart(request):
-    df = get_df()
+    df = get_df(request.user)
+    if df is None:
+        return JsonResponse({'error': 'Dataset is not set.'}, status=400)
     group_column = request.GET.get("column")
     if group_column not in df.columns:
         return JsonResponse({"error": "Invalid column"}, status=400)
@@ -47,7 +51,9 @@ def ctr_chart(request):
 
 
 def pie_chart(request):
-    df = get_df()
+    df = get_df(request.user)
+    if df is None:
+        return JsonResponse({'error': 'Dataset is not set.'}, status=400)
     column = request.GET.get("column")
     
     if not column:
@@ -66,11 +72,12 @@ def pie_chart(request):
         "labels": labels,
         "values": values
     })
-    
-    
+       
     
 def heatmap_chart(request):
-    df = get_df()
+    df = get_df(request.user)
+    if df is None:
+        return JsonResponse({'error': 'Dataset is not set.'}, status=400)
     corr = df.select_dtypes(include=['number']).corr()
     categories = list(corr.columns)
 
@@ -95,7 +102,9 @@ def heatmap_chart(request):
 
 
 def analytics_info(request):
-    df = get_df()
+    df = get_df(request.user)
+    if df is None:
+        return JsonResponse({'error': 'Dataset is not set.'}, status=400)
     info_html = "<table class='table table-striped'><thead><tr><th>Column</th><th>Non-Null Count</th><th>Dtype</th></tr></thead><tbody>"
 
     for column in df.columns:
@@ -109,7 +118,9 @@ def analytics_info(request):
 
 
 def data_summary(request):
-    df = get_df()
+    df = get_df(request.user)
+    if df is None:
+        return JsonResponse({'error': 'Dataset is not set.'}, status=400)
     description = df.describe().transpose().round(2)
     
     summary = {}
@@ -129,7 +140,9 @@ def data_summary(request):
 
 
 def boxplot_data(request):
-    df = get_df()
+    df = get_df(request.user)
+    if df is None:
+        return JsonResponse({'error': 'Dataset is not set.'}, status=400)
     column = request.GET.get("column")
     if column not in df.columns:
         return JsonResponse({"error": "Invalid column"}, status=400)
@@ -139,7 +152,9 @@ def boxplot_data(request):
 
 
 def click_vs_non_click_ctr(request):
-    df = get_df()
+    df = get_df(request.user)
+    if df is None:
+        return JsonResponse({'error': 'Dataset is not set.'}, status=400)
     column = request.GET.get('column')
     
     if not column or column not in df.columns:
