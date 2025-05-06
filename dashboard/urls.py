@@ -6,5 +6,5 @@ urlpatterns = [
     path('', views.home, name='home'),
     
     # api
-    path('api/dashboard-data/', api.chart_data, name='chart-data')
+    path('api/dashboard-data/', api.chart_data, name='chart-data'),
 ]

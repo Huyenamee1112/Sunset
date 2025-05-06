@@ -1,179 +1,266 @@
-'use strict';
+document.addEventListener("DOMContentLoaded", function () {
+  const charts = {};
 
-document.addEventListener('DOMContentLoaded', function () {
-  setTimeout(function () {
-    floatchart();
-  }, 500);
-});
+  function fetchChartData(endpoint, renderFn) {
+    fetch(endpoint)
+      .then((res) => {
+        if (!res.ok) throw new Error("Network error");
+        return res.json();
+      })
+      .then((data) => renderFn(data))
+      .catch((err) => {
+        console.error("Chart error:", err);
+        alert('Failed to load chart data. Please try again later.');
+      });
+  }
 
+  // Render Frequent Chart
+  function renderVisitorChart(column) {
+    const chartContainer = document.querySelector("#frequent-chart");
 
-let dashboardData = null;
-
-document.addEventListener('DOMContentLoaded', function () {
-  fetch('/api/dashboard-data/')
-    .then(response => response.json())
-    .then(data => {
-      dashboardData = data;
-      renderVisitorChart(data.visitor);
-      renderIncomeChart(data.income);
-    })
-    .catch(error => console.error('Lỗi khi load dữ liệu dashboard:', error));
-});
-
-
-// Biểu đồ visitor-chart
-function renderVisitorChart(data) {
-  const options = {
-    chart: {
-      height: 450,
-      type: 'area',
-      toolbar: { show: false }
-    },
-    dataLabels: { enabled: false },
-    colors: ['#1890ff', '#13c2c2'],
-    series: data.series,
-    stroke: { curve: 'smooth', width: 2 },
-    xaxis: {
-      categories: data.categories
+    if (!chartContainer) {
+      console.error("Frequent chart container not found.");
+      return;
     }
-  };
-  const chart = new ApexCharts(document.querySelector('#visitor-chart'), options);
-  chart.render();
-} 
 
-
-// Biểu đồ income-overview-chart
-function renderIncomeChart(data) {
-  const options = {
-    chart: {
-      type: 'bar',
-      height: 365,
-      toolbar: { show: false }
-    },
-    colors: ['#13c2c2'],
-    plotOptions: {
-      bar: {
-        columnWidth: '45%',
-        borderRadius: 4
-      }
-    },
-    dataLabels: { enabled: false },
-    series: data.series,
-    stroke: { curve: 'smooth', width: 2 },
-    xaxis: {
-      categories: data.categories,
-      axisBorder: { show: false },
-      axisTicks: { show: false }
-    },
-    yaxis: { show: false },
-    grid: { show: false }
-  };
-  const chart = new ApexCharts(document.querySelector('#income-overview-chart'), options);
-  chart.render();
-};
-
-
-
-function floatchart() {
-
-  // Biểu đồ analytics-report-chart
-  (function () {
-    var options = {
-      chart: {
-        type: 'line',
-        height: 340,
-        toolbar: { show: false }
-      },
-      colors: ['#faad14'],
-      plotOptions: {
-        bar: {
-          columnWidth: '45%',
-          borderRadius: 4
+    fetchChartData(`/api/frequent-chart/?column=${column}`, (data) => {
+      const options = {
+        chart: {
+          type: "bar",
+          height: 450
+        },
+        series: [{
+          name: column.charAt(0).toUpperCase() + column.slice(1),
+          data: data.values
+        }],
+        xaxis: {
+          categories: data.labels
+        },
+        colors: ['#1890ff', '#13c2c2'],
+        tooltip: {
+          y: {
+            formatter: val => `${val} record${val !== 1 ? 's' : ''}`
+          }
         }
-      },
-      stroke: { curve: 'smooth', width: 1.5 },
-      grid: { strokeDashArray: 4 },
-      series: [{
-        data: [58, 90, 38, 83, 63, 75, 35, 55]
-      }],
-      xaxis: {
-        type: 'datetime',
-        categories: [
-          '2018-05-19T00:00:00.000Z',
-          '2018-06-19T00:00:00.000Z',
-          '2018-07-19T01:30:00.000Z',
-          '2018-08-19T02:30:00.000Z',
-          '2018-09-19T03:30:00.000Z',
-          '2018-10-19T04:30:00.000Z',
-          '2018-11-19T05:30:00.000Z',
-          '2018-12-19T06:30:00.000Z'
+      };
+
+      if (charts.visitorChart) {
+        charts.visitorChart.updateOptions(options);
+      } else {
+        charts.visitorChart = new ApexCharts(chartContainer, options);
+        charts.visitorChart.render();
+      }
+    });
+  }
+
+  // Render CTR Chart
+  function renderCTRChart(column) {
+    const chartContainer = document.querySelector("#ctr-chart");
+
+    if (!chartContainer) {
+      console.error("CTR chart container not found.");
+      return;
+    }
+
+    fetchChartData(`/api/ctr-chart/?column=${column}`, (data) => {
+      const options = {
+        chart: { type: 'area', height: 300 },
+        series: [
+          { name: "CTR", data: data.ctr },
+          { name: "Frequency", data: data.frequency }
         ],
-        labels: { format: 'MMM' },
-        axisBorder: { show: false },
-        axisTicks: { show: false }
-      },
-      yaxis: { show: false }
-    };
-    var chart = new ApexCharts(document.querySelector('#analytics-report-chart'), options);
-    chart.render();
-  })();
+        xaxis: { categories: data.labels },
+        colors: ['#fa541c', '#13c2c2'],
+        tooltip: {
+          shared: true,
+          y: {
+            formatter: val => (val * 100).toFixed(2) + '%'
+          }
+        }
+      };
 
-  // Biểu đồ sales-report-chart
-  (function () {
-    var options = {
-      chart: {
-        type: 'bar',
-        height: 430,
-        toolbar: { show: false }
-      },
-      plotOptions: {
-        bar: {
-          columnWidth: '30%',
-          borderRadius: 4
-        }
-      },
-      stroke: {
-        show: true,
-        width: 8,
-        colors: ['transparent']
-      },
-      dataLabels: { enabled: false },
-      legend: {
-        position: 'top',
-        horizontalAlign: 'right',
-        show: true,
-        fontFamily: `'Public Sans', sans-serif`,
-        offsetX: 10,
-        offsetY: 10,
-        labels: { useSeriesColors: false },
-        markers: {
-          width: 10,
-          height: 10,
-          radius: '50%',
-          offsexX: 2,
-          offsexY: 2
-        },
-        itemMargin: {
-          horizontal: 15,
-          vertical: 5
-        }
-      },
-      colors: ['#faad14', '#1890ff'],
-      series: [
-        {
-          name: 'Net Profit',
-          data: [180, 90, 135, 114, 120, 145]
-        },
-        {
-          name: 'Revenue',
-          data: [120, 45, 78, 150, 168, 99]
-        }
-      ],
-      xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+      if (charts.ctrChart) {
+        charts.ctrChart.updateOptions(options);
+      } else {
+        charts.ctrChart = new ApexCharts(chartContainer, options);
+        charts.ctrChart.render();
       }
-    };
-    var chart = new ApexCharts(document.querySelector('#sales-report-chart'), options);
-    chart.render();
-  })();
-}
+    });
+  }
+
+  // Handle frequent chart select change
+  const select = document.querySelector("#frequent-column-select");
+  if (select) {
+    renderVisitorChart(select.value);
+    select.addEventListener("change", function () {
+      renderVisitorChart(this.value);
+    });
+  } else {
+    console.error("Select element for frequent-column-select not found.");
+  }
+
+  // Handle CTR chart select change
+  const ctrSelect = document.getElementById("ctr-column-select");
+  if (ctrSelect) {
+    renderCTRChart(ctrSelect.value);
+    ctrSelect.addEventListener("change", () => {
+      renderCTRChart(ctrSelect.value);
+    });
+  } else {
+    console.error("Select element for ctr-column-select not found.");
+  }
+
+
+    // Render Pie Chart
+  function renderPieChart(column) {
+    const chartContainer = document.querySelector("#pie-chart-container");
+
+    if (!chartContainer) {
+      console.error("Pie chart container not found.");
+      return;
+    }
+
+    fetchChartData(`/api/pie-chart/?column=${column}`, (data) => {
+      const options = {
+        chart: {
+          type: 'pie',
+          height: 300,
+        },
+        series: data.values,
+        labels: data.labels,
+        colors: ['#1890ff', '#13c2c2', '#fa541c', '#52c41a', '#fa8c16'],
+        tooltip: {
+          y: {
+            formatter: (val) => `${val} records`,
+          },
+        },
+      };
+
+      if (charts.pieChart) {
+        charts.pieChart.updateOptions(options);
+      } else {
+        charts.pieChart = new ApexCharts(chartContainer, options);
+        charts.pieChart.render();
+      }
+    });
+  }
+
+  // Handle Pie chart select change
+  const pieSelect = document.getElementById("pie-column-select");
+
+  if (pieSelect) {
+    // Initial render of the pie chart
+    renderPieChart(pieSelect.value);
+
+    // Event listener to handle dropdown change
+    pieSelect.addEventListener("change", function () {
+      renderPieChart(this.value);
+    });
+  } else {
+    console.error("Select element for pie-column-select not found.");
+  }
+
+  function renderHeatmap() {
+    const chartContainer = document.querySelector("#heatmap-chart");
+  
+    if (!chartContainer) {
+      console.error("Heatmap container not found.");
+      return;
+    }
+  
+    fetchChartData("/api/heatmap-chart/", (data) => {
+      const options = {
+        chart: {
+          height: 700,
+          type: 'heatmap',
+        },
+        series: data.series,
+        title: {
+          text: 'Heatmap',
+        },
+        dataLabels: {
+          enabled: true,
+        },
+        xaxis: {
+          categories: data.categories,
+        },
+        plotOptions: {
+          heatmap: {
+            shadeIntensity: 0.5,
+            colorScale: {
+              ranges: [
+                { from: -1, to: -0.5, name: 'Negative High', color: '#f87171' },
+                { from: -0.5, to: 0, name: 'Negative Low', color: '#facc15' },
+                { from: 0, to: 0.5, name: 'Positive Low', color: '#60a5fa' },
+                { from: 0.5, to: 1, name: 'Positive High', color: '#2563eb' }
+              ]
+            }
+          }
+        }
+      };
+  
+      if (charts.heatmapChart) {
+        charts.heatmapChart.updateOptions(options);
+      } else {
+        charts.heatmapChart = new ApexCharts(chartContainer, options);
+        charts.heatmapChart.render();
+      }
+    });
+  }
+  renderHeatmap();
+
+
+  function loadAnalyticsInfo() {
+    fetch('/api/analytics-info/')
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById('analytics-report');
+        container.innerHTML = data.info_html;
+      })
+      .catch(error => {
+        console.error('Error loading analytics info:', error);
+      });
+  }
+
+  loadAnalyticsInfo();
+
+
+
+  function loadDataSummary() {
+    fetch('/api/data-summary/')
+      .then(response => response.json())
+      .then(data => {
+        const tableBody = document.getElementById("data-summary-table-body");
+        const description = data.description;
+        
+        // Clear any existing rows
+        tableBody.innerHTML = "";
+
+        // Loop through the summary and create table rows
+        for (let column in description) {
+          const stats = description[column];
+          const row = document.createElement("tr");
+          
+          row.innerHTML = `
+            <td>${column}</td>
+            <td>${stats.count}</td>
+            <td>${stats.mean}</td>
+            <td>${stats.std}</td>
+            <td>${stats.min}</td>
+            <td>${stats['25_percent']}</td>
+            <td>${stats['50_percent']}</td>
+            <td>${stats['75_percent']}</td>
+            <td>${stats.max}</td>
+          `;
+          
+          tableBody.appendChild(row);
+        }
+      })
+      .catch(error => {
+        console.error('Error loading data summary:', error);
+      });
+  }
+
+  // Load the data summary when the page loads
+  loadDataSummary();
+});
