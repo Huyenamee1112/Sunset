@@ -5,8 +5,10 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 @login_required
 def home(request):
-    df = get_df()
-    columns = df.columns.tolist()
+    df = get_df(request.user)
+    columns = []
+    if df is not None:
+        columns = df.columns.tolist()
 
     context = {
         'columns': columns
