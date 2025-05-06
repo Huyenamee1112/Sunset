@@ -3,4 +3,4 @@ import pandas as pd
 
 @lru_cache(maxsize=1)
 def get_df():
-    return pd.read_csv("data/data.csv")
+    return pd.read_csv(r"data/data.csv")
