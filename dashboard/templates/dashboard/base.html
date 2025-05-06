@@ -77,12 +77,6 @@
             </a>
           </li>
           <li class="pc-item">
-            <a href="{% url 'chart_apex' %}" class="pc-link">
-              <span class="pc-micon"><i class="ti ti-chart-line"></i></span>
-              <span class="pc-mtext">Data Analysis</span>
-            </a>
-          </li>
-          <li class="pc-item">
             <a href="../elements/icon-tabler.html" class="pc-link">
               <span class="pc-micon"><i class="ti ti-clipboard-check"></i></span>
               <span class="pc-mtext">Machine Learning</span>
@@ -357,19 +351,6 @@
   {% block content %}{% endblock %}
   <!-- [ Main Content ] end -->
 
-
-  <footer class="pc-footer">
-    <div class="footer-wrapper container-fluid">
-      <div class="row">
-        <div class="col-auto my-1">
-          <ul class="list-inline footer-link mb-0">
-            <li class="list-inline-item"><a href="{% url 'home' %}">Home</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </footer>
-
   <!-- [Page Specific JS] start -->
   <script src="{% static 'dashboard/js/plugins/apexcharts.min.js' %}"></script>
   <script src="{% static 'dashboard/js/pages/dashboard-default.js' %}"></script>
@@ -382,8 +363,9 @@
   <script src="{% static 'dashboard/js/fonts/custom-font.js' %}"></script>
   <script src="{% static 'dashboard/js/pcoded.js' %}"></script>
   <script src="{% static 'dashboard/js/plugins/feather.min.js' %}"></script>
+  <script src="https://cdn.plot.ly/plotly-2.27.1.min.js"></script>
     
-  <script>change_box_container('false');</script>
+  <!-- <script>change_box_container('false');</script> -->
 
   <script>layout_rtl_change('false');</script>
   
