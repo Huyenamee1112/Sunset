@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Render Frequent Chart
-  function renderVisitorChart(column) {
+  function renderFrequentChart(column) {
     const chartContainer = document.querySelector("#frequent-chart");
 
     if (!chartContainer) {
@@ -89,11 +89,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Handle frequent chart select change
-  const select = document.querySelector("#frequent-column-select");
-  if (select) {
-    renderVisitorChart(select.value);
-    select.addEventListener("change", function () {
-      renderVisitorChart(this.value);
+  const frequentSelect = document.querySelector("#frequent-column-select");
+  if (frequentSelect) {
+    renderFrequentChart(frequentSelect.value);
+    frequentSelect.addEventListener("change", function () {
+      renderFrequentChart(this.value);
     });
   } else {
     console.error("Select element for frequent-column-select not found.");
@@ -263,4 +263,124 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Load the data summary when the page loads
   loadDataSummary();
+
+
+  function fetchAndRenderBoxplot(column) {
+    fetch(`/api/boxplot-data/?column=${column}`)
+      .then(response => response.json())
+      .then(data => {
+        const trace = {
+          y: data.values,
+          type: 'box',
+          name: column,
+          boxpoints: 'outliers',
+          marker: { color: '#6366f1' }
+        };
+
+        const layout = {
+          title: `Boxplot of ${column}`,
+          margin: { t: 40 },
+          transition: {
+            duration: 500,
+            easing: 'cubic-in-out'
+          }
+        };
+
+        // Sử dụng Plotly.react để update nhanh kèm animation
+        Plotly.react('boxplot-chart', [trace], layout, { responsive: true });
+      })
+      .catch(error => {
+        console.error("Error fetching boxplot data:", error);
+      });
+  }
+
+  // Khởi động
+  const boxplotSelect = document.getElementById("boxplot-select");
+  if (boxplotSelect) {
+    const defaultColumn = boxplotSelect.value;
+    fetchAndRenderBoxplot(defaultColumn);
+
+    boxplotSelect.addEventListener("change", () => {
+      fetchAndRenderBoxplot(boxplotSelect.value);
+    });
+  }
+  window.addEventListener('resize', () => {
+    Plotly.Plots.resize(document.getElementById('boxplot-chart'));
+  });  
+
+
+
+
+
+  function fetchAndRenderChart(column) {
+    fetch(`/api/click-vs-non-click-ctr/?column=${column}`)
+      .then(response => response.json())
+      .then(data => {
+        const barTrace = {
+          x: data.index,
+          y: data.click,
+          name: 'Click',
+          type: 'bar',
+          marker: { color: '#4caf50' }
+        };
+  
+        const barTraceNonClick = {
+          x: data.index,
+          y: data.nonClick,
+          name: 'Non-Click',
+          type: 'bar',
+          marker: { color: '#f44336' }
+        };
+  
+        const lineTrace = {
+          x: data.index,
+          y: data.ctr,
+          name: 'CTR',
+          type: 'line',
+          marker: { color: '#3b82f6' },
+          yaxis: 'y2'
+        };
+  
+        const layout = {
+          title: `Click vs Non-Click with CTR for ${column}`,
+          barmode: 'group',  // Chồng cột Click/Non-Click
+          xaxis: {
+            title: column,  // Thêm tên cho trục X
+            tickangle: -45,  // Đặt góc cho ticks nếu cần
+          },
+          yaxis: {
+            title: 'Count',
+            rangemode: 'tozero',
+          },
+          yaxis2: {
+            title: 'CTR',
+            overlaying: 'y',
+            side: 'right',
+            rangemode: 'tozero',
+          },
+          transition: {
+            duration: 500,
+            easing: 'cubic-in-out',
+          },
+          responsive: true
+        };
+  
+        Plotly.react('bar-chart-1', [barTrace, barTraceNonClick, lineTrace], layout);
+      })
+      .catch(error => {
+        console.error("Error fetching data:", error);
+      });
+  }
+  
+  // Khởi động khi trang được load
+  const mixedChartSelect = document.getElementById("column-select");
+  if (mixedChartSelect) {
+    const defaultColumn = mixedChartSelect.value;
+    fetchAndRenderChart(defaultColumn);
+  
+    mixedChartSelect.addEventListener("change", () => {
+      fetchAndRenderChart(mixedChartSelect.value);
+    });
+  }
+  
 });
