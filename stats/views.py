@@ -1,12 +1,8 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-import pandas as pd
 from .utils import get_df
 
 # Create your views here.
-df = pd.read_csv('data\data.csv')
-    
-
 def frequent_chart(request):
     df = get_df()
     column = request.GET.get("column")
@@ -60,7 +56,7 @@ def pie_chart(request):
     if column not in df.columns:
         return JsonResponse({"error": f"Column '{column}' not found in the dataset"}, status=400)
 
-    top_n = 20
+    top_n = 10
     counts = df[column].value_counts().nlargest(top_n).to_dict()
     
     labels = [str(k) for k in counts.keys()]
@@ -143,6 +139,7 @@ def boxplot_data(request):
 
 
 def click_vs_non_click_ctr(request):
+    df = get_df()
     column = request.GET.get('column')
     
     if not column or column not in df.columns:

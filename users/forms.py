@@ -86,8 +86,7 @@ class UserUpdateForm(forms.ModelForm):
         'class': 'form-control'
     }), required=False)
     email = forms.EmailField(widget=forms.EmailInput(attrs={
-        'class': 'form-control',
-        'readonly': 'readonly'
+        'class': 'form-control'
     }))
     username = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form-control',
