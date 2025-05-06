@@ -1,20 +1,14 @@
 from django.shortcuts import render
-from .models import StatsResult
 from django.http import JsonResponse
 import pandas as pd
-import io
+from .utils import get_df
 
 # Create your views here.
 df = pd.read_csv('data\data.csv')
-
-
-def get_stats(request):
-    record = StatsResult.objects.get(pk=1)
-    return JsonResponse(record.stats_data)
-    
     
 
 def frequent_chart(request):
+    df = get_df()
     column = request.GET.get("column")
     if column not in df.columns:
         return JsonResponse({"error": "Invalid column"}, status=400)
@@ -32,6 +26,7 @@ def frequent_chart(request):
 
 
 def ctr_chart(request):
+    df = get_df()
     group_column = request.GET.get("column")
     if group_column not in df.columns:
         return JsonResponse({"error": "Invalid column"}, status=400)
@@ -41,9 +36,9 @@ def ctr_chart(request):
     except Exception:
         return JsonResponse({"error": "Grouping error"}, status=400)
 
-    group_data['Frequency'] = df[group_column].value_counts(normalize=True).round(2)
-    group_data['CTR'] = (group_data.get(1, 0) / (group_data.get(0, 0) + group_data.get(1, 0))).round(2)
-    group_data = group_data.fillna(0)
+    group_data['Frequency'] = df[group_column].value_counts(normalize=True)
+    group_data['CTR'] = (group_data.get(1, 0) / (group_data.get(0, 0) + group_data.get(1, 0)))
+    group_data = group_data.fillna(0).round(2)
     
     top_n = 10
     group_data = group_data.sort_values(by='CTR', ascending=False).head(top_n)
@@ -56,6 +51,7 @@ def ctr_chart(request):
 
 
 def pie_chart(request):
+    df = get_df()
     column = request.GET.get("column")
     
     if not column:
@@ -78,6 +74,7 @@ def pie_chart(request):
     
     
 def heatmap_chart(request):
+    df = get_df()
     corr = df.select_dtypes(include=['number']).corr()
     categories = list(corr.columns)
 
@@ -102,6 +99,7 @@ def heatmap_chart(request):
 
 
 def analytics_info(request):
+    df = get_df()
     info_html = "<table class='table table-striped'><thead><tr><th>Column</th><th>Non-Null Count</th><th>Dtype</th></tr></thead><tbody>"
 
     for column in df.columns:
@@ -114,9 +112,9 @@ def analytics_info(request):
     return JsonResponse({"info_html": info_html})
 
 
-
 def data_summary(request):
-    description = df.describe().transpose()
+    df = get_df()
+    description = df.describe().transpose().round(2)
     
     summary = {}
     for column, stats in description.iterrows():
@@ -132,3 +130,38 @@ def data_summary(request):
         }
     
     return JsonResponse({"description": summary})
+
+
+def boxplot_data(request):
+    df = get_df()
+    column = request.GET.get("column")
+    if column not in df.columns:
+        return JsonResponse({"error": "Invalid column"}, status=400)
+
+    values = df[column].dropna().tolist()
+    return JsonResponse({"values": values})
+
+
+def click_vs_non_click_ctr(request):
+    column = request.GET.get('column')
+    
+    if not column or column not in df.columns:
+        return JsonResponse({'error': 'Invalid column selected'}, status=400)
+    
+    group_data = df.groupby([column, 'click']).size().unstack(fill_value=0)
+    group_data['Frequency'] = df[column].value_counts(normalize=True)
+    
+    group_data['CTR'] = (group_data.get(1, 0) / (group_data.get(0, 0) + group_data.get(1, 0)))
+    group_data = group_data.fillna(0).round(2)
+
+    top_n = 10
+    group_data = group_data.sort_values(by='Frequency', ascending=False).head(top_n)
+
+    data = {
+        'index': group_data.index.tolist(),
+        'click': group_data[1].tolist(),
+        'nonClick': group_data[0].tolist(),
+        'ctr': group_data['CTR'].tolist(),
+    }
+    
+    return JsonResponse(data)
