@@ -23,6 +23,7 @@ import users.urls
 import chart.urls
 import upload.urls
 import list.urls
+import stats.urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,7 +31,8 @@ urlpatterns = [
     path('', include(users.urls)),
     path('', include(chart.urls)),
     path('', include(upload.urls)),
-    path('', include(list.urls))
+    path('', include(list.urls)),
+    path('', include(stats.urls))
 ]
 
 if settings.DEBUG:
