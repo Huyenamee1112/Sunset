@@ -46,41 +46,48 @@
               <div class="tab-content mt-4" id="mlTabsContent">
                 <!-- Training Tab -->
                 <div class="tab-pane fade show active" id="training" role="tabpanel" aria-labelledby="training-tab">
-                  <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                      <label for="dataset" class="form-label">Select Dataset</label>
-                      <select class="form-select" id="dataset" name="dataset">
-                        {% for dataset in datasets %}
-                            <option value="{{ dataset.name }}">{{ dataset.name }}</option>
-                        {% endfor %}
-                      </select>
-                    </div>
-
-                    <div class="mb-3">
-                      <label for="model" class="form-label">Select Model</label>
-                      <select class="form-select" id="model" name="model">
-                        <option value="model1">Model 1</option>
-                        <option value="model2">Model 2</option>
-                        <option value="model3">Model 3</option>
-                      </select>
-                    </div>
-
-                    <div class="mb-3">
-                      <label for="params" class="form-label">Model Parameters (JSON)</label>
-                      <textarea class="form-control" id="params" name="params" rows="5"></textarea>
-                    </div>
-
-                    <div class="alert alert-info" role="alert">
-                      <strong>Note:</strong> Please do not close the tab or browser while training is in progress.
-                    </div>
-
-                    <button type="submit" id="trainButton" class="btn btn-primary w-100">
-                      Train
-                      <span id="trainLoader" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                    </button>
-                  </form>
-                </div>
+                    <form id="training-form" method="post" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      
+                      <div class="mb-3">
+                        <label for="dataset" class="form-label">Select Dataset</label>
+                        <select class="form-select" id="dataset" name="dataset">
+                          {% for dataset in datasets %}
+                              <option value="{{ dataset.name }}">{{ dataset.name }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                  
+                      <div class="mb-3">
+                        <label for="model" class="form-label">Select Model</label>
+                        <select class="form-select" id="model" name="model">
+                            {% for value, name in model_choices.items %}
+                              <option value="{{ value }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                      </div>
+                  
+                      <div class="mb-3">
+                        <label for="model_name" class="form-label">Model Name</label>
+                        <input type="text" class="form-control" id="model_name" name="model_name" placeholder="Enter a name for your model" maxlength="32">
+                      </div>
+                  
+                      <div class="mb-3">
+                        <label for="params" class="form-label">Model Parameters (JSON)</label>
+                        <textarea class="form-control" id="params" name="params" rows="5">{}</textarea>
+                      </div>
+                  
+                      <div class="alert alert-info" role="alert">
+                        <strong>Note:</strong> Please do not close the tab or browser while training is in progress.
+                      </div>
+                  
+                      <button type="submit" id="trainButton" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
+                        <span id="trainText">Train</span>
+                        <span id="trainLoader" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        <span id="timeDisplay" class="d-none">0s</span>
+                      </button>
+                    </form>
+                  </div>                  
                 <!-- Testing Tab (To be added later) -->
                 <div class="tab-pane fade" id="testing" role="tabpanel" aria-labelledby="testing-tab">
                   <!-- Content for Testing will be added later -->
@@ -95,3 +102,9 @@
     </div>
   </div>
 {% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'models/js/training.js' %}">
+</script>
+{% endblock %}
+
