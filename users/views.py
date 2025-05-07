@@ -3,6 +3,7 @@ from .forms import UserLoginForm, UserRegisterForm, UserUpdateForm, ProfileUpdat
 from django.contrib.auth import login, logout
 from django.contrib import messages
 from users.models import Profile
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def login_view(request):
@@ -33,7 +34,7 @@ def register(request):
         
     return render(request, 'users/register.html', {'form': form})
 
-
+@login_required
 def profile(request):
     try:
         user_profile = Profile.objects.get(user=request.user)
@@ -46,10 +47,14 @@ def profile(request):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
+            messages.success(request, 'Profile updated successfully!')
             return redirect('profile')
+        else:
+            messages.error(request, 'Profile upload failed!')
     else:
         user_form = UserUpdateForm(instance=request.user)
         profile_form = ProfileUpdateForm(user=request.user, instance=user_profile)
+    
         
     context = {
         'user_form': user_form,

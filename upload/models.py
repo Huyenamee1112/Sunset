@@ -10,3 +10,12 @@ class Dataset(models.Model):
     
     def __str__(self):
         return self.name
+    
+    
+class ProcessedData(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    dataset = models.OneToOneField(Dataset, on_delete=models.CASCADE, related_name='processed_data')
+    file = models.FileField(upload_to='upload/users/processed/')
+    
+    def __str__(self):
+        return self.name
