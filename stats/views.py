@@ -187,8 +187,8 @@ def scatter_plot_data(request):
         return JsonResponse({'error': 'Invalid axis'}, status=400)
     
     data = {
-        'x': df[axis1].tolist(),
-        'y': df[axis2].tolist(),
+        'x': df[axis1].tolist()[:500],
+        'y': df[axis2].tolist()[:500],
         'axis1': axis1,
         'axis2': axis2,
     }
