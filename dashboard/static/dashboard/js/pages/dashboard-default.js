@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((data) => renderFn(data))
       .catch((err) => {
         console.error("Chart error:", err);
-        alert('Failed to load chart data. Please try again later.');
+        console.log('Failed to load chart data. Please try again later.');
       });
   }
 
@@ -280,21 +280,22 @@ document.addEventListener("DOMContentLoaded", function () {
         const layout = {
           title: `Boxplot of ${column}`,
           margin: { t: 40 },
-          transition: {
-            duration: 500,
-            easing: 'cubic-in-out'
-          }
         };
 
-        // Sử dụng Plotly.react để update nhanh kèm animation
-        Plotly.react('boxplot-chart', [trace], layout, { responsive: true });
+        // Sử dụng Plotly.react với các tham số để tạo animation
+        Plotly.react('boxplot-chart', [trace], layout, {
+          transition: {
+            duration: 500,
+            easing: 'linear'
+          },
+          responsive: true
+        });
       })
       .catch(error => {
         console.error("Error fetching boxplot data:", error);
       });
   }
 
-  // Khởi động
   const boxplotSelect = document.getElementById("boxplot-select");
   if (boxplotSelect) {
     const defaultColumn = boxplotSelect.value;
@@ -304,14 +305,14 @@ document.addEventListener("DOMContentLoaded", function () {
       fetchAndRenderBoxplot(boxplotSelect.value);
     });
   }
+
   window.addEventListener('resize', () => {
     Plotly.Plots.resize(document.getElementById('boxplot-chart'));
-  });  
+  });
 
 
 
-
-
+  // Mied Chart
   function fetchAndRenderChart(column) {
     fetch(`/api/click-vs-non-click-ctr/?column=${column}`)
       .then(response => response.json())
@@ -343,10 +344,10 @@ document.addEventListener("DOMContentLoaded", function () {
   
         const layout = {
           title: `Click vs Non-Click with CTR for ${column}`,
-          barmode: 'group',  // Chồng cột Click/Non-Click
+          barmode: 'group',
           xaxis: {
-            title: column,  // Thêm tên cho trục X
-            tickangle: -45,  // Đặt góc cho ticks nếu cần
+            title: column,
+            tickangle: -45,
           },
           yaxis: {
             title: 'Count',
@@ -372,7 +373,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
   
-  // Khởi động khi trang được load
   const mixedChartSelect = document.getElementById("column-select");
   if (mixedChartSelect) {
     const defaultColumn = mixedChartSelect.value;
