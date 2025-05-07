@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'chart.apps.ChartConfig',
     'upload.apps.UploadConfig',
     'list.apps.ListConfig',
-    'stats.apps.StatsConfig'
+    'stats.apps.StatsConfig',
+    'models.apps.ModelsConfig'
 ]
 
 MIDDLEWARE = [

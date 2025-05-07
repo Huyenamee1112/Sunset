@@ -11,7 +11,9 @@ const elements = {
   analyticsReport: document.getElementById("analytics-report"),
   dataSummaryTableBody: document.getElementById("data-summary-table-body"),
   boxplotChart: document.getElementById("boxplot-chart"),
-  barChart1: document.getElementById("bar-chart-1")
+  barChart1: document.getElementById("bar-chart-1"),
+  scatterXSelect: document.getElementById("scatter-x-select"),
+  scatterYSelect: document.getElementById("scatter-y-select"),
 };
 
 // Kiểm tra sự tồn tại của các phần tử DOM
@@ -267,6 +269,38 @@ function throttle(fn, limit) {
   };
 }
 
+
+function renderScatterPlot(axis1, axis2) {
+  fetch(`/api/scatter-plot/?axis1=${encodeURIComponent(axis1)}&axis2=${encodeURIComponent(axis2)}`)
+    .then(res => {
+      if (!res.ok) throw new Error("Network response was not ok");
+      return res.json();
+    })
+    .then(data => {
+      const trace = {
+        x: data.x,
+        y: data.y,
+        mode: 'markers',
+        type: 'scatter',
+        marker: { color: '#10b981' }
+      };
+      const layout = {
+        title: `${data.axis1} vs ${data.axis2}`,
+        xaxis: { title: data.axis1 },
+        yaxis: { title: data.axis2 },
+        height: 400
+      };
+      Plotly.newPlot('scatter-plot', [trace], layout);
+    })
+    .catch(error => {
+      console.error("Scatter plot error:", error);
+      const plotDiv = document.getElementById("scatter-plot");
+      if (plotDiv) {
+        plotDiv.innerHTML = `<p class="text-danger">Error loading scatter plot.</p>`;
+      }
+    });
+}
+
 // Khởi tạo sự kiện và render ban đầu
 document.addEventListener("DOMContentLoaded", () => {
   // Frequent Chart
@@ -274,7 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
     observeAndRender(elements.frequentChart, () => renderFrequentChart(elements.frequentSelect.value));
     elements.frequentSelect.addEventListener("change", debounce(function () {
       renderFrequentChart(this.value);
-    }, 300));
+    }, 100));
   }
 
   // CTR Chart
@@ -282,7 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
     observeAndRender(elements.ctrChart, () => renderCTRChart(elements.ctrSelect.value));
     elements.ctrSelect.addEventListener("change", debounce(() => {
       renderCTRChart(elements.ctrSelect.value);
-    }, 300));
+    }, 100));
   }
 
   // Pie Chart
@@ -290,7 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
     observeAndRender(elements.pieChart, () => renderPieChart(elements.pieSelect.value));
     elements.pieSelect.addEventListener("change", debounce(function () {
       renderPieChart(this.value);
-    }, 300));
+    }, 100));
   }
 
   // Heatmap
@@ -301,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
     observeAndRender(elements.boxplotChart, () => fetchAndRenderBoxplot(elements.boxplotSelect.value));
     elements.boxplotSelect.addEventListener("change", debounce(() => {
       fetchAndRenderBoxplot(elements.boxplotSelect.value);
-    }, 300));
+    }, 100));
   }
 
   // Mixed Chart
@@ -309,7 +343,15 @@ document.addEventListener("DOMContentLoaded", () => {
     observeAndRender(elements.barChart1, () => fetchAndRenderMixedChart(elements.mixedChartSelect.value));
     elements.mixedChartSelect.addEventListener("change", debounce(() => {
       fetchAndRenderMixedChart(elements.mixedChartSelect.value);
-    }, 300));
+    }, 100));
+  }
+
+  // Scatter Plot
+  if (elements.scatterXSelect && elements.scatterYSelect) {
+    const renderScatter = () => renderScatterPlot(elements.scatterXSelect.value, elements.scatterYSelect.value);
+    observeAndRender(document.getElementById('scatter-plot'), renderScatter);
+    elements.scatterXSelect.addEventListener('change', debounce(renderScatter, 100));
+    elements.scatterYSelect.addEventListener('change', debounce(renderScatter, 100));
   }
 
   // Load Analytics and Summary
