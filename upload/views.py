@@ -13,7 +13,7 @@ def upload_view(request):
             messages.success(request, 'File uploaded successfully!')
             return redirect('upload')
         else:
-            # messages.error(request, 'Upload failed.')
+            messages.error(request, 'Upload failed!')
             print(form.errors)
     else:
         form = DatasetUploadForm(user=request.user)
