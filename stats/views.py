@@ -177,3 +177,19 @@ def click_vs_non_click_ctr(request):
     }
     
     return JsonResponse(data)
+
+
+def scatter_plot_data(request):
+    df = get_df(request.user.id)
+    axis1 = request.GET.get('axis1')
+    axis2 = request.GET.get('axis2')
+    if not axis1 or not axis2 or axis1 not in df.columns or axis2 not in df.columns:
+        return JsonResponse({'error': 'Invalid axis'}, status=400)
+    
+    data = {
+        'x': df[axis1].tolist(),
+        'y': df[axis2].tolist(),
+        'axis1': axis1,
+        'axis2': axis2,
+    }
+    return JsonResponse(data)

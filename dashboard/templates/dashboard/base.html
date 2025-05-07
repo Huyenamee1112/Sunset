@@ -77,7 +77,7 @@
             </a>
           </li>
           <li class="pc-item">
-            <a href="../elements/icon-tabler.html" class="pc-link">
+            <a href="{% url 'models' %}" class="pc-link">
               <span class="pc-micon"><i class="ti ti-clipboard-check"></i></span>
               <span class="pc-mtext">Machine Learning</span>
             </a>
@@ -351,12 +351,7 @@
   {% block content %}{% endblock %}
   <!-- [ Main Content ] end -->
 
-  <!-- [Page Specific JS] start -->
-  <script src="{% static 'dashboard/js/plugins/apexcharts.min.js' %}"></script>
-  <script src="{% static 'dashboard/js/pages/dashboard-default.js' %}"></script>
-  <!-- [Page Specific JS] end -->
-
-  <!-- Required Js -->
+    <!-- Required Js -->
   <script src="{% static 'dashboard/js/plugins/popper.min.js' %}"></script>
   <script src="{% static 'dashboard/js/plugins/simplebar.min.js' %}"></script>
   <script src="{% static 'dashboard/js/plugins/bootstrap.min.js' %}"></script>
@@ -364,6 +359,11 @@
   <script src="{% static 'dashboard/js/pcoded.js' %}"></script>
   <script src="{% static 'dashboard/js/plugins/feather.min.js' %}"></script>
   <script src="https://cdn.plot.ly/plotly-2.27.1.min.js"></script>
+  
+
+  <!-- [Page Specific JS] start -->
+  {% block extra_js %}{% endblock %}
+  <!-- [Page Specific JS] end -->
     
   <!-- <script>change_box_container('false');</script> -->
 

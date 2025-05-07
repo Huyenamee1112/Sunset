@@ -10,4 +10,5 @@ urlpatterns = [
     path('api/data-summary/', views.data_summary, name='data_summary'),
     path('api/boxplot-data/', views.boxplot_data, name='boxplot_data'),
     path('api/click-vs-non-click-ctr/', views.click_vs_non_click_ctr, name='click_vs_non_click_ctr'),
+    path('api/scatter-plot/', views.scatter_plot_data, name='scatter-plot'),
 ]
