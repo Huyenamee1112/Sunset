@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 MODEL_CHOICES = [
+    ('logistic_regression', 'Logistic Regression'),
     ('decision_tree', 'Decision Tree Classifier'),
     ('random_forest', 'Random Forest Classifier'),
     ('xgboost', 'XGBoost Classifier')
