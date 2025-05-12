@@ -38,6 +38,7 @@ pure_eval==0.2.3
 Pygments==2.19.1
 pyparsing==3.2.3
 python-dateutil==2.9.0.post0
+python-decouple==3.8
 pytz==2025.2
 pywin32==310
 pyzmq==26.4.0
@@ -54,4 +55,4 @@ traitlets==5.14.3
 typing_extensions==4.13.2
 tzdata==2025.2
 wcwidth==0.2.13
-xgboost==3.0.
+xgboost==3.0.0
