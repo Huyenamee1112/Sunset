@@ -10,6 +10,7 @@ from io import StringIO
 from upload.models import Dataset
 from .import load_models
 from io import BytesIO
+from sklearn import metrics
 
 
 ctr_columns = ['site_id', 'site_domain', 'site_category', 'app_id', 'app_domain', 'app_category',
@@ -240,5 +241,54 @@ def training(user, dataset_name, selected_model, model_name):
         raise ValueError('An exception while saving model.')
     
     
+def testing(dataset_name, model_name):
+    try:
+        dataset = Dataset.objects.get(name=dataset_name)
+        instance = TrainTestData.objects.get(dataset=dataset)
+    except Dataset.DoesNotExist as e:
+        raise ValueError(str(e))
+    except TrainTestData.DoesNotExist as e:
+        raise ValueError(str(e))
+    
+    X_test_file = instance.X_test.path
+    y_test_file = instance.y_test.path
+    
+    try:
+        X_test = pd.read_csv(X_test_file).values.astype(np.float32)
+        y_test = pd.read_csv(y_test_file).values.ravel()
+    except:
+        raise ValueError('An error while reading csv file.')
+    
+    try:
+        model_instance = MLModel.objects.get(name=model_name)
+        with model_instance.file.open('rb') as f:
+            model = pickle.load(f)
+    except MLModel.DoesNotExist as e:
+        raise ValueError(str(e))
+    
+    # testing
+    y_pred = model.predict(X_test)
+    y_scores = model.predict_proba(X_test)[:, 1]
+    
+    accuracy = metrics.accuracy_score(y_test, y_pred)
+    recall = metrics.recall_score(y_test, y_pred)
+    precision = metrics.precision_score(y_test, y_pred)
+    f1_macro = metrics.f1_score(y_test, y_pred, average="macro")
+    f1_weighted = metrics.f1_score(y_test, y_pred, average="weighted")
+    confusion_matrix = metrics.confusion_matrix(y_test, y_pred, labels=[1, 0])
+    roc_auc = metrics.roc_auc_score(y_test, y_scores)
     
     
+    result = {
+        "Accuracy": round(accuracy, 2),
+        "Precision": round(precision, 2),
+        "Recall": round(recall, 2),
+        "F1-Score": {
+            "macro": round(f1_macro, 2),
+            "weighted": round(f1_weighted, 2)
+        },
+        "ROC-AUC": round(roc_auc, 2),
+        "confusion_matrix": confusion_matrix.tolist()
+    }
+    
+    return result
