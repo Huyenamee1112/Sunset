@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'upload.apps.UploadConfig',
     'list.apps.ListConfig',
     'stats.apps.StatsConfig',
-    'models.apps.ModelsConfig'
+    'models.apps.ModelsConfig',
+    'predict.apps.PredictConfig'
 ]
 
 MIDDLEWARE = [

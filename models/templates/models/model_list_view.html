@@ -51,6 +51,7 @@
                         <td>{{ model.uploaded_at }}</td>
                         <td>{{ model.file.size|filesizeformat }}</td>
                         <td>
+                          <a href="{{ model.file.url }}" class="btn btn-outline-primary btn-sm" download>Download</a>
                           <form action="{% url 'model_delete' model.id %}" method="POST" style="display:inline;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger btn-sm">Delete</button>
