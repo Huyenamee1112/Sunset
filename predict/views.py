@@ -14,14 +14,10 @@ import pickle
 @login_required
 def predict_view(request):
     datasets = Dataset.objects.filter(user=request.user).order_by('-uploaded_at')
-    try:
-        admin = User.objects.get(username='admin')
-    except:
-        pass
     
     context = {
         'datasets': datasets,
-        'models': MLModel.objects.filter(user__in=[request.user, admin])
+        'models': MLModel.objects.filter(user=request.user)
     }
     return render(request, 'predict/predict.html', context)
 
