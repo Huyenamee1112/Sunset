@@ -24,6 +24,7 @@ import upload.urls
 import list.urls
 import stats.urls
 import models.urls
+import predict.urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,7 +33,8 @@ urlpatterns = [
     path('', include(upload.urls)),
     path('', include(list.urls)),
     path('', include(stats.urls)),
-    path('', include(models.urls))
+    path('', include(models.urls)),
+    path('', include(predict.urls))
 ]
 
 if settings.DEBUG:

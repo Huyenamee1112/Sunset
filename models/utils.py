@@ -124,9 +124,7 @@ def get_csv_content(data):
     return ContentFile(csv_content)
 
 
-def create_train_test_data(instance, file):
-    df = pd.read_csv(file)
-    # train test
+def add_feature(df):
     group_data = df[['hour_of_day', 'device_id']].groupby('hour_of_day').count()
     df['hourly_user_counts'] = df['hour_of_day'].map(group_data['device_id'])
 
@@ -145,6 +143,13 @@ def create_train_test_data(instance, file):
     df['frequent_of_site_id'] = df['user'].map(
         df.groupby('user')['site_id'].count() / df['site_id'].nunique()
     )
+    
+    return df
+
+def create_train_test_data(instance, file):
+    df = pd.read_csv(file)
+    # train test
+    df = add_feature(df)
     
     # tran test split
     train, test = train_test_split(df, test_size=0.2, random_state=42)
