@@ -20,13 +20,19 @@ from django.conf import settings
 from django.conf.urls.static import static
 import dashboard.urls
 import users.urls
-import chart.urls
+import upload.urls
+import list.urls
+import stats.urls
+import models.urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(dashboard.urls)),
     path('', include(users.urls)),
-    path('', include(chart.urls))
+    path('', include(upload.urls)),
+    path('', include(list.urls)),
+    path('', include(stats.urls)),
+    path('', include(models.urls))
 ]
 
 if settings.DEBUG:
