@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from upload.models import Dataset
 from .models import MODEL_CHOICES
@@ -29,6 +29,24 @@ def machine_learning(request):
     }
     return render(request, 'models/models.html', context)
 
+@login_required
+def model_list_view(request):
+    try:
+        admin = User.objects.get(username='admin')
+    except:
+        pass
+    context = {
+        'models': MLModel.objects.filter(user__in=[request.user, admin])
+    }
+    return render(request, 'models/model_list_view.html', context)
+
+
+@login_required
+def model_delete(request, model_id):
+    dataset = get_object_or_404(MLModel, id=model_id)
+    dataset.delete()
+    return redirect('model_list_view')
+ 
 
 @csrf_exempt
 def training_api(request):
