@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
         e.preventDefault();
 
         const dataset = document.getElementById("test_dataset").value;
-        const model = document.getElementById("test_model").value;
+        const model_name = document.getElementById("test_model").value;
 
         // Xóa các thông báo lỗi cũ
         document.querySelectorAll(".error-message").forEach(msg => msg.remove());
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
             valid = false;
             showError("test_dataset", "Please select a dataset.");
         }
-        if (!model) {
+        if (!model_name) {
             valid = false;
             showError("test_model", "Please select a model.");
         }
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     "X-CSRFToken": "{{ csrf_token }}",
                     "Content-Type": "application/x-www-form-urlencoded",
                 },
-                body: new URLSearchParams({ dataset, model }),
+                body: new URLSearchParams({ dataset, model_name }),
             });
 
             const result = await response.json();
@@ -89,9 +89,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Hiển thị kết quả
                 for (const [metric, value] of Object.entries(result.result)) {
                     const row = document.createElement("tr");
-                    if (metric === "f1_score") {
+                    if (metric === "F1-Score") {
                         row.innerHTML = `<td>${metric}</td><td>Macro: ${value.macro}, Weighted: ${value.weighted}</td>`;
-                    } else if (["accuracy", "precision", "recall"].includes(metric)) {
+                    } else if (["Accuracy", "Precision", "Recall", "ROC-AUC"].includes(metric)) {
                         row.innerHTML = `<td>${metric}</td><td>${value}</td>`;
                     }
                     resultTable.appendChild(row);
