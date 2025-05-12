@@ -17,26 +17,17 @@ def machine_learning(request):
         x[0]: x[1] for x in MODEL_CHOICES
     }
     
-    try:
-        admin = User.objects.get(username='admin')
-    except:
-        pass
-    
     context = {
         'datasets': datasets,
         'model_choices': model_choices,
-        'models': MLModel.objects.filter(user__in=[request.user, admin])
+        'models': MLModel.objects.filter(user=request.user)
     }
     return render(request, 'models/models.html', context)
 
 @login_required
 def model_list_view(request):
-    try:
-        admin = User.objects.get(username='admin')
-    except:
-        pass
     context = {
-        'models': MLModel.objects.filter(user__in=[request.user, admin])
+        'models': MLModel.objects.filter(user=request.user)
     }
     return render(request, 'models/model_list_view.html', context)
 
