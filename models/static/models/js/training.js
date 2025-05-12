@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const trainButton = document.getElementById("trainButton");
     const loader = document.getElementById("trainLoader");
-    const timeDisplay = document.getElementById("timeDisplay");
+    const timeDisplay = document.getElementById("train_timeDisplay");
 
     const trainText = document.getElementById("trainText");
 
@@ -29,10 +29,9 @@ document.addEventListener("DOMContentLoaded", function () {
     form.addEventListener("submit", async function (e) {
         e.preventDefault();
 
-        const dataset = document.getElementById("dataset").value;
-        const model = document.getElementById("model").value;
+        const dataset = document.getElementById("train_dataset").value;
+        const model = document.getElementById("train_model").value;
         const modelName = document.getElementById("model_name").value.trim();
-        const params = document.getElementById("params").value;
 
         // Xóa các thông báo lỗi cũ
         const errorMessages = document.querySelectorAll(".error-message");
@@ -58,11 +57,6 @@ document.addEventListener("DOMContentLoaded", function () {
             showError("model_name", "Model name cannot contain special characters or spaces.");
         }
 
-        if (!params) {
-            valid = false;
-            showError("params", "Model parameters are required.");
-        }
-
         if (!valid) return;
 
         loader.classList.remove("d-none");
@@ -82,7 +76,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     dataset: dataset,
                     model: model,
                     model_name: modelName,
-                    params: params,
                 }),
             });
 

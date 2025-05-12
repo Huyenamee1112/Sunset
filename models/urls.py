@@ -4,4 +4,5 @@ from . import views
 urlpatterns = [
     path('models/', views.machine_learning, name='models'),
     path('api/training/', views.training_api, name='training_api'),
+     path('api/testing/', views.testing_api, name='testing_api'),
 ]
