@@ -138,4 +138,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-CSRF_TRUSTED_ORIGINS = ['https://sunset-y1fu.onrender.com']
+
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS = ['https://sunset-y1fu.onrender.com']
